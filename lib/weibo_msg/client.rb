@@ -32,7 +32,8 @@ module WeiboMsg
     end
 
     def self.authenticate(endpoint, app_key, app_secret)
-      # wait for developement of weibo
+      # wait for development of weibo
+
       # url = "#{endpoint}/token"
       # request = Nestful.get url, { :grant_type => 'client_credential', :appid => api, :secret => key } rescue nil
       # unless request.nil?
