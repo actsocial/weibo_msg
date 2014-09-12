@@ -1,173 +1,55 @@
 # -*- encoding : utf-8 -*-
+require 'hashie'
 require 'multi_json'
 
 module WeiboMsg
 
   class ReplyMessage
-     def initialize
-      @CreateTime = Time.now.to_i
+    attr_accessor :type
+    attr_accessor :result
+    attr_accessor :receiver_id
+    attr_accessor :sender_id
+    attr_accessor :data
+    attr_accessor :create_at
+
+    def initialize
+      @create_at = Time.now.to_i
+      @data = Hashie::Mash.new({})
     end
   end
 
   class TextReplyMessage < ReplyMessage
-    xml_accessor :Content, :cdata => true
+    attr_accessor :text
+
     def initialize
       super
-      @MsgType = 'text'
+      @type = 'text'
     end
   end
 
-  class Music
-    include ROXML
-    xml_accessor :Title, :cdata => true
-    xml_accessor :Description, :cdata => true
-    xml_accessor :MusicUrl,   :cdata => true
-    xml_accessor :HQMusicUrl, :cdata => true
-  end
+  class PositionReplyMessage < ReplyMessage
+    attr_accessor :longitude
+    attr_accessor :latitude
 
-  # <xml>
-  # <ToUserName><![CDATA[toUser]]></ToUserName>
-  # <FromUserName><![CDATA[fromUser]]></FromUserName>
-  # <CreateTime>12345678</CreateTime>
-  # <MsgType><![CDATA[music]]></MsgType>
-  # <Music>
-  # <Title><![CDATA[TITLE]]></Title>
-  # <Description><![CDATA[DESCRIPTION]]></Description>
-  # <MusicUrl><![CDATA[MUSIC_Url]]></MusicUrl>
-  # <HQMusicUrl><![CDATA[HQ_MUSIC_Url]]></HQMusicUrl>
-  # <ThumbMediaId><![CDATA[media_id]]></ThumbMediaId>
-  # </Music>
-  # </xml>
-
-  class MusicReplyMessage < ReplyMessage
-    xml_accessor :Music, :as => Music
     def initialize
       super
-      @MsgType = 'music'
+      @type = 'position'
     end
   end
 
   class Article
-    include ROXML
-    xml_accessor :Title, :cdata => true
-    xml_accessor :Description, :cdata => true
-    xml_accessor :PicUrl, :cdata => true
-    xml_accessor :Url,    :cdata => true
+    attr_accessor :display_name
+    attr_accessor :summary
+    attr_accessor :image
+    attr_accessor :url
   end
 
-  # <xml>
-  # <ToUserName><![CDATA[toUser]]></ToUserName>
-  # <FromUserName><![CDATA[fromUser]]></FromUserName>
-  # <CreateTime>12345678</CreateTime>
-  # <MsgType><![CDATA[news]]></MsgType>
-  # <ArticleCount>2</ArticleCount>
-  # <Articles>
-  # <item>
-  # <Title><![CDATA[title1]]></Title>
-  # <Description><![CDATA[description1]]></Description>
-  # <PicUrl><![CDATA[picurl]]></PicUrl>
-  # <Url><![CDATA[url]]></Url>
-  # </item>
-  # <item>
-  # <Title><![CDATA[title]]></Title>
-  # <Description><![CDATA[description]]></Description>
-  # <PicUrl><![CDATA[picurl]]></PicUrl>
-  # <Url><![CDATA[url]]></Url>
-  # </item>
-  # </Articles>
-  # </xml>
+  class ArticlesReplyMessage < ReplyMessage
+    attr_accessor :articles
 
-  class NewsReplyMessage < ReplyMessage
-    xml_accessor :ArticleCount, :as => Integer
-    xml_accessor :Articles, :as => [Article], :in => 'Articles', :from => 'item'
     def initialize
       super
-      @MsgType = 'news'
-    end
-  end
-
-  # <xml>
-  # <ToUserName><![CDATA[toUser]]></ToUserName>
-  # <FromUserName><![CDATA[fromUser]]></FromUserName>
-  # <CreateTime>12345678</CreateTime>
-  # <MsgType><![CDATA[video]]></MsgType>
-  # <Video>
-  # <MediaId><![CDATA[media_id]]></MediaId>
-  # <Title><![CDATA[title]]></Title>
-  # <Description><![CDATA[description]]></Description>
-  # </Video>
-  # </xml>
-
-  class Video
-    include ROXML
-    xml_accessor :MediaId, :cdata => true
-    xml_accessor :Description, :cdata => true
-    xml_accessor :Title, :cdata => true
-  end
-
-  class VideoReplyMessage < ReplyMessage
-    xml_accessor :Video, :as => Video
-    def initialize
-      super
-      @MsgType = 'video'
-    end
-  end
-
-  # <xml>
-  # <ToUserName><![CDATA[toUser]]></ToUserName>
-  # <FromUserName><![CDATA[fromUser]]></FromUserName>
-  # <CreateTime>12345678</CreateTime>
-  # <MsgType><![CDATA[voice]]></MsgType>
-  # <Voice>
-  # <MediaId><![CDATA[media_id]]></MediaId>
-  # </Voice>
-  # </xml>
-  class Voice
-    include ROXML
-    xml_accessor :MediaId, :cdata => true
-  end
-
-  class VoiceReplyMessage < ReplyMessage
-    xml_accessor :Voice, :as => Voice
-    def initialize
-      super
-      @MsgType = 'voice'
-    end
-  end
-
-  # <xml>
-  # <ToUserName><![CDATA[toUser]]></ToUserName>
-  # <FromUserName><![CDATA[fromUser]]></FromUserName>
-  # <CreateTime>12345678</CreateTime>
-  # <MsgType><![CDATA[image]]></MsgType>
-  # <Image>
-  # <MediaId><![CDATA[media_id]]></MediaId>
-  # </Image>
-  # </xml>
-
-  class Image
-    include ROXML
-    xml_accessor :MediaId, :cdata => true
-  end
-
-  class ImageReplyMessage < ReplyMessage
-    xml_accessor :Image, :as => Image
-    def initialize
-      super
-      @MsgType = 'image'
-    end
-  end
-
-  # <xml>
-  # <ToUserName><![CDATA[touser]]></ToUserName>
-  # <FromUserName><![CDATA[fromuser]]></FromUserName>
-  # <CreateTime>1399197672</CreateTime>
-  # <MsgType><![CDATA[transfer_customer_service]]></MsgType>
-  # </xml>
-  class TransferCustomerServiceReplyMessage < ReplyMessage
-    def initialize
-      super
-      @MsgType = 'transfer_customer_service'
+      @type = 'articles'
     end
   end
 

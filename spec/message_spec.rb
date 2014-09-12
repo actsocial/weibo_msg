@@ -49,27 +49,27 @@ describe 'weibo_msg/message' do
     end
 
     it 'is a image message' do
-        msg = WeiboMsg::Message.factory(%(
-        {
-          "type": "image",
-          "receiver_id": 1902538057,
-          "sender_id": 2489518277,
-          "created_at": "Mon Jul 16 18:09:20 +0800 2012",
-          "text": "发了一张图片",
-          "data": {
-            "vfid": 821804459,     // 发送者用此ID查看图片
-            "tovfid": 821804469    // 接收者用此ID查看图片
-          }
+      msg = WeiboMsg::Message.factory(%(
+      {
+        "type": "image",
+        "receiver_id": 1902538057,
+        "sender_id": 2489518277,
+        "created_at": "Mon Jul 16 18:09:20 +0800 2012",
+        "text": "发了一张图片",
+        "data": {
+          "vfid": 821804459,     // 发送者用此ID查看图片
+          "tovfid": 821804469    // 接收者用此ID查看图片
         }
-        ))
-        expect(msg.class).to eq(WeiboMsg::ImageMessage)
-        expect(msg.type).to eq('image')
-        expect(msg.receiver_id).to eq(1902538057)
-        expect(msg.sender_id).to eq(2489518277)
-        expect(msg.created_at).to eq('Mon Jul 16 18:09:20 +0800 2012')
-        expect(msg.text).to eq('发了一张图片')
-        expect(msg.data.vfid).to eq(821804459)
-        expect(msg.data.tovfid).to eq(821804469)
+      }
+      ))
+      expect(msg.class).to eq(WeiboMsg::ImageMessage)
+      expect(msg.type).to eq('image')
+      expect(msg.receiver_id).to eq(1902538057)
+      expect(msg.sender_id).to eq(2489518277)
+      expect(msg.created_at).to eq('Mon Jul 16 18:09:20 +0800 2012')
+      expect(msg.text).to eq('发了一张图片')
+      expect(msg.data.vfid).to eq(821804459)
+      expect(msg.data.tovfid).to eq(821804469)
     end
 
   end
