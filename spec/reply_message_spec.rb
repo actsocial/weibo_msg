@@ -11,7 +11,6 @@ describe 'weibo_msg/reply_message' do
       msg.receiver_id = '123456'
       msg.sender_id = '123123'
       msg.data.text = '纯文本回复'
-      pp msg
       expect(msg.type).to  eq('text')
     end
 
@@ -22,7 +21,6 @@ describe 'weibo_msg/reply_message' do
       msg.sender_id = '123123'
       msg.data.longitude = '116.308586'
       msg.data.latitude = '39.982525'
-      pp msg
       expect(msg.type).to eq('position')
     end
 

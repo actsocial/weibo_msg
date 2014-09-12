@@ -7,11 +7,11 @@ module WeiboMsg
   class User < Api
 
     def gw_path(method)
-      "/user/#{method}?access_token=#{access_token}"
+      "/eps/user/#{method}.json?access_token=#{access_token}"
     end
 
-    def info(openid, lang = nil)
-      url = "#{gw_url('info')}&openid=#{openid}"
+    def info(uid, lang = nil)
+      url = "#{gw_url('info')}&uid=#{uid}"
       url = "#{url}&lang=#{lang}" if lang.present?
 
       request = Nestful.get url rescue nil
