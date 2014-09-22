@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'multi_json'
-require 'nestful'
+require 'rest-client'
 
 module WeiboMsg
 
@@ -12,19 +12,17 @@ module WeiboMsg
 
     def upload_media(media, media_type)
       file = process_file(media)
-      params = {
-        media: file,
-        type: media_type,
-        access_token: access_token
-      }
-      response = Nestful.post "#{gw_path}/media_upload.json", MultiJson.dump(params) rescue nil
+      url = "#{gw_path}/media_upload.json?type=#{media_type}&access_token=#{access_token}"
+      payload = {:media => file}
+      response = RestClient::Request.execute(:method => :post, :url => url, :payload => payload)
       check_response(response)
     end
 
     def download_media_url(media_id)
       download_media_url = "#{gw_path}/media_msget.json"
       params = URI.encode_www_form("access_token" => access_token,
-                                   "media"     => media_id)
+                                   "media_id"     => media_id)
+
       download_media_url += "?#{params}"
       download_media_url
     end
@@ -43,7 +41,8 @@ module WeiboMsg
           media_file = media.is_a?(File) ? media : File.new(media_url)
           uploader.cache!(media_file)
         end
-        file = process_media(uploader)
+        # file = process_media(uploader)
+        file = File.new uploader.file.file
         CarrierWave.clean_cached_files! # clear last one day cache
         file
       end
@@ -53,17 +52,16 @@ module WeiboMsg
         uploader.file.to_file
       end
 
-      # FOR JPG IMAGE
       def covert(uploader)
         # image process
         unless (uploader.file.content_type =~ /image/).nil?
           if !jpep?(uploader.file)
             require "mini_magick"
             # covert to jpeg
-            image = MiniMagick::Image.open(uploader.path)
+            image = MiniMagick::Image.open(uploader.file)
             image.format("jpg")
             uploader.cache!(File.open(image.path))
-            image.destroy! # remove /tmp from MinMagick generate
+            image.destroy!
           end
         end
         uploader
@@ -77,10 +75,10 @@ module WeiboMsg
 
       def jpep?(file)
         content_type = if file.respond_to?(:content_type)
-            file.content_type
-          else
-            content_type(file.path)
-          end
+          file.content_type
+        else
+          content_type(file.path)
+        end
         !(content_type =~ /jpeg/).nil?
       end
 

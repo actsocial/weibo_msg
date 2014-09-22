@@ -14,6 +14,7 @@ require 'weibo_msg/media'
 require 'weibo_msg/uploader'
 
 module WeiboMsg
-  extend self
+  class << self
+  end
 
 end

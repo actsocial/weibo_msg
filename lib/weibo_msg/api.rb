@@ -25,8 +25,8 @@ module WeiboMsg
 
     def check_response(response)
       unless response.nil?
-        errcode = MultiJson.load(response.body)['errcode']
-        return true if errcode == 0
+        error_code = MultiJson.load(response.body)['error_code']
+        return MultiJson.load(response.body) if error_code.nil?
       end
       false
     end
