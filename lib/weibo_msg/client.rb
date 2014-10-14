@@ -64,5 +64,10 @@ module WeiboMsg
       message_custom_endpoint = 'https://m.api.weibo.com/2'
       MessageCustom.new(@app_key, @app_secret, get_access_token, @expired_at, message_custom_endpoint)
     end
+
+    def media
+      Media.new(@api, @key, access_token, @expired_at, @endpoint)
+    end
+
   end
 end
